@@ -38,6 +38,8 @@ public class Ship extends Polygon{
 		}
 		//System.out.println(Arrays.toString(super.ypoints));
 		
+		
+		
 	}
 	
 	
@@ -60,8 +62,10 @@ public class Ship extends Polygon{
 	public double getAng(){
 		return angle;
 	}
-	public void sendToMiddle(){
-	
+	public void test(){
+		for (int x = 0; x < super.ypoints.length; x++){
+			super.ypoints[x] += 1000;
+		}
 	}
 	
 	/*

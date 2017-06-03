@@ -122,10 +122,45 @@ public class AsteroidGame implements ActionListener, KeyListener{
 	
 	public void actionPerformed(ActionEvent arg0) {
 		// TODO Auto-generated method stub
+		if (transformed.getBounds2D().getMinX() > WIDTH){
+			double tempAng = ship.getAng();
+			double diff = 90-tempAng;
+			
+			transform.rotate(Math.toRadians(diff), ship.getCenterX(), ship.getCenterY());
+			transform.translate(0,WIDTH);
+			transform.rotate(Math.toRadians(-diff), ship.getCenterX(), ship.getCenterY());
+			
+		}
+		
+		else if (transformed.getBounds2D().getX() < 0){
+			double tempAng = ship.getAng();
+			double diff = 90-tempAng;
+			transform.rotate(Math.toRadians(diff), ship.getCenterX(), ship.getCenterY());
+			transform.translate(0,-WIDTH);
+			transform.rotate(Math.toRadians(-diff), ship.getCenterX(), ship.getCenterY());
+		}
+		
+		else if (transformed.getBounds2D().getY() > HEIGHT){
+			double tempAng = ship.getAng();
+			double diff = 180-tempAng;
+			transform.rotate(Math.toRadians(diff), ship.getCenterX(), ship.getCenterY());
+			transform.translate(0,HEIGHT);
+			transform.rotate(Math.toRadians(-diff), ship.getCenterX(), ship.getCenterY());
+		}
+		
+		else if (transformed.getBounds2D().getY() < 0){
+			double tempAng = ship.getAng();
+			double diff = 180-tempAng;
+			transform.rotate(Math.toRadians(diff), ship.getCenterX(), ship.getCenterY());
+			transform.translate(0,-HEIGHT);
+			transform.rotate(Math.toRadians(-diff), ship.getCenterX(), ship.getCenterY());
+		}
+		
+		
+		
+		
 		if (right){
 			ship.right();
-			Point2D test = new Point(100, 100);
-			Point2D test2 = new Point(400, 400);
 			
 			transform.rotate(Math.toRadians(turnRight), ship.getCenterX(), ship.getCenterY());
 			//System.out.println(ship.getCenterY());
@@ -141,33 +176,15 @@ public class AsteroidGame implements ActionListener, KeyListener{
 		if (go){
 			ship.go();
 			
-			//ship.x += Math.sin(Math.toRadians(angle)) * 5;
-			//ship.y
-			/*
-			ship.x += (int) Math.sin(Math.toRadians(angle));
-			ship.y += (int) Math.cos(Math.toRadians(angle));
-			*/
-			//System.out.println(Math.sin(Math.toRadians(ship.angle)) * 5 + "y" + Math.cos(Math.toRadians(ship.angle)) * 5);
-
 		}
 		else if (back){
 			ship.reverse();
 		}
 		ship.move();
-		//ship.decrement();
-		/*
-		if (transformed.getBounds2D().getX() > 1000){
-			
-			int[] xCor = {800, 780, 800, 820};
-			int[] yCor = {400, 460, 440, 460}; 
-			ship.xpoints = xCor;
-			ship.ypoints = yCor;
-			
-			 
-			ship.xpoints = xCor;
-			ship.ypoints = yCor;
-		}
-		*/
+		
+		
+		
+		
 		transformed = transform.createTransformedShape(ship);
 		//System.out.println("X: " + transformed.getBounds2D().getX());
 		//System.out.println("Y: " + transformed.getBounds2D().getY());
@@ -197,7 +214,6 @@ public class AsteroidGame implements ActionListener, KeyListener{
 		else if (e.getKeyCode() == KeyEvent.VK_DOWN){
 			back = true;
 		}
-		
 		
 	}
 
