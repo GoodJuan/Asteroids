@@ -23,6 +23,7 @@ public class Ship extends Polygon{
 		this.angle= angle;
 	}
 	
+	
 	public void right(){
 		angle += 5;
 	}
@@ -40,6 +41,9 @@ public class Ship extends Polygon{
 		
 		
 		
+	}
+	public double getSpeed(){
+		return currSpeed;
 	}
 	
 	

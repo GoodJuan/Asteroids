@@ -14,6 +14,7 @@ import java.awt.event.KeyListener;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.awt.Polygon;
 
@@ -38,21 +39,23 @@ public class AsteroidGame implements ActionListener, KeyListener{
 	public int turnRight = 5;
 	public int turnLeft = -5;
 	
-	public Shape transformed;
-	public Shape transformedLine;
-	
-	public Point p1;
-	public Point p2;
-	public Point center;
-	public Point p4;
+	public ArrayList<Laser> lasers;
+	public ArrayList<Shape> transformedLasers;
 	
 	public final int WIDTH = 1400;
 	public final int HEIGHT = 800;
 	
 	public Ship ship;
+	public Shape transformed;
+	
+	public Rectangle shipHead;
+	public Shape shipHeadTrans;
+	public Point headPoint;
 
 	
 	public AffineTransform transform = new AffineTransform();
+	public AffineTransform lasTransform = new AffineTransform();
+	public AffineTransform headTransform = new AffineTransform();
 	
 	public AsteroidGame(){
 		JFrame jframe = new JFrame();
@@ -69,13 +72,18 @@ public class AsteroidGame implements ActionListener, KeyListener{
 		int xPoints[] = {800, 780, 800, 820};
 	    int yPoints[] = {400, 460, 440, 460}; 
 	    
-	    p1 = new Point(400,400);
-	    p2 = new Point(380, 460);
-	    center = new Point(400,440);//center
-	    p4 = new Point(420, 460);
+	    //(800, 400) is the initial location of the 'tip' of the ship'.
+	    headPoint = new Point(800, 400);
+	    
+	    lasers = new ArrayList<Laser>();
+	    transformedLasers = new ArrayList<Shape>();
 	    
 		ship = new Ship(xPoints, yPoints, 4, 0);
 		transformed = transform.createTransformedShape(ship);
+		 
+		shipHead = new Rectangle(headPoint);
+		shipHeadTrans = transform.createTransformedShape(shipHead);
+		//shipHeadTrans.getBounds2D().
 		
 		timer.start();
 		
@@ -85,34 +93,18 @@ public class AsteroidGame implements ActionListener, KeyListener{
 		
 		g.setColor(Color.BLACK);
 		g.fillRect(0, 0, WIDTH, HEIGHT);
-		
 	
-		
 		Graphics2D g2d = (Graphics2D)g;
 		
+		//drawing the ship
 		g2d.setColor(Color.WHITE);
 		g2d.draw(transformed);
 		
-		
-		/*
-		g2d.draw(r2);
-	    Path2D.Double path = new Path2D.Double();
-	    path.append(r, false);
-	    AffineTransform t = new AffineTransform();
-	    t.rotate(Math.toRadians(45));
-	    path.transform(t);
-	    g2d.draw(path);
-		
-		
-		Rectangle test = new Rectangle(WIDTH/2, HEIGHT/2, 200, 100);
-		Rectangle test2 = new Rectangle(WIDTH/2, HEIGHT/2, 200, 100);
-		
-		g2d.draw(test2);
-		AffineTransform at = AffineTransform.getTranslateInstance(100, 100);
-		g2d.rotate(Math.toRadians(45));
-		g2d.draw(test);
-		*/
-		
+		//drawing lasers
+		g2d.setColor(Color.YELLOW.brighter());
+		for (int i = 0; i < transformedLasers.size(); i++){
+			g2d.fill(transformedLasers.get(i));
+		}
 		
 		
 		
@@ -122,6 +114,10 @@ public class AsteroidGame implements ActionListener, KeyListener{
 	
 	public void actionPerformed(ActionEvent arg0) {
 		// TODO Auto-generated method stub
+		
+		/*The for if and else if statements are just to send the ship
+		 * to the other side of the canvas if it ever leaves the screen
+		 */
 		if (transformed.getBounds2D().getMinX() > WIDTH){
 			double tempAng = ship.getAng();
 			double diff = 90-tempAng;
@@ -130,22 +126,38 @@ public class AsteroidGame implements ActionListener, KeyListener{
 			transform.translate(0,WIDTH);
 			transform.rotate(Math.toRadians(-diff), ship.getCenterX(), ship.getCenterY());
 			
+			headTransform.rotate(Math.toRadians(diff), shipHead.getCenterX(), shipHead.getCenterY());
+			headTransform.translate(0,WIDTH);
+			headTransform.rotate(Math.toRadians(-diff), shipHead.getCenterX(), shipHead.getCenterY());
+			
 		}
 		
 		else if (transformed.getBounds2D().getX() < 0){
 			double tempAng = ship.getAng();
 			double diff = 90-tempAng;
+			
 			transform.rotate(Math.toRadians(diff), ship.getCenterX(), ship.getCenterY());
 			transform.translate(0,-WIDTH);
 			transform.rotate(Math.toRadians(-diff), ship.getCenterX(), ship.getCenterY());
+			
+			headTransform.rotate(Math.toRadians(diff), shipHead.getCenterX(), shipHead.getCenterY());
+			headTransform.translate(0,-WIDTH);
+			headTransform.rotate(Math.toRadians(-diff), shipHead.getCenterX(), shipHead.getCenterY());
 		}
 		
 		else if (transformed.getBounds2D().getY() > HEIGHT){
 			double tempAng = ship.getAng();
 			double diff = 180-tempAng;
+			
 			transform.rotate(Math.toRadians(diff), ship.getCenterX(), ship.getCenterY());
 			transform.translate(0,HEIGHT);
 			transform.rotate(Math.toRadians(-diff), ship.getCenterX(), ship.getCenterY());
+			
+			headTransform.rotate(Math.toRadians(diff), shipHead.getCenterX(), shipHead.getCenterY());
+			headTransform.translate(0,HEIGHT);
+			headTransform.rotate(Math.toRadians(-diff), shipHead.getCenterX(), shipHead.getCenterY());
+			
+			
 		}
 		
 		else if (transformed.getBounds2D().getY() < 0){
@@ -154,42 +166,80 @@ public class AsteroidGame implements ActionListener, KeyListener{
 			transform.rotate(Math.toRadians(diff), ship.getCenterX(), ship.getCenterY());
 			transform.translate(0,-HEIGHT);
 			transform.rotate(Math.toRadians(-diff), ship.getCenterX(), ship.getCenterY());
+			
+			headTransform.rotate(Math.toRadians(diff), shipHead.getCenterX(), shipHead.getCenterY());
+			headTransform.translate(0,-HEIGHT);
+			headTransform.rotate(Math.toRadians(-diff), shipHead.getCenterX(), shipHead.getCenterY());
 		}
-		
-		
 		
 		
 		if (right){
 			ship.right();
-			
+			//rotating the ship
 			transform.rotate(Math.toRadians(turnRight), ship.getCenterX(), ship.getCenterY());
-			//System.out.println(ship.getCenterY());
-			
+			//rotating the 'tip' of the ship.
+			headTransform.rotate(Math.toRadians(turnRight), ship.getCenterX(), ship.getCenterY());
 		}
 		
 		else if (left){
 			ship.left(); 
-			
+			//rotating the ship
 			transform.rotate(Math.toRadians(turnLeft), ship.getCenterX(), ship.getCenterY());
-
+			//rotating the 'tip' of the ship
+			headTransform.rotate(Math.toRadians(turnLeft), ship.getCenterX(), ship.getCenterY());
 		}
 		if (go){
 			ship.go();
-			
 		}
 		else if (back){
 			ship.reverse();
 		}
+		
+		//moving and shaping each individual laser that had been shot
+		for (int i = 0; i < transformedLasers.size(); i++){
+			lasers.get(i).move();
+			
+			lasTransform = new AffineTransform();
+			System.out.println(lasers.get(i).getAng());
+			lasTransform.rotate(Math.toRadians(lasers.get(i).getAng()), lasers.get(i).getRotX(), lasers.get(i).getRotY());
+			transformedLasers.set(i, lasTransform.createTransformedShape(lasers.get(i)));
+
+		}
+		
+		//moving the ship
 		ship.move();
 		
+		double velX = ship.getSpeed() * Math.cos(Math.toRadians(ship.getAng()));
+		double velY = ship.getSpeed()* Math.sin(Math.toRadians(ship.getAng()));
+		//moving the 'tip'
+		double locX = 2 * velX;
+		double locY = 2 * velY;
 		
-		
-		
+		headTransform.transform(headPoint, new Point((int)locX, (int)locY));
+		shipHead.y -= ship.getSpeed();
+
 		transformed = transform.createTransformedShape(ship);
-		//System.out.println("X: " + transformed.getBounds2D().getX());
-		//System.out.println("Y: " + transformed.getBounds2D().getY());
-		//System.out.println(transformed.getBounds2D().getMinX());
+		shipHeadTrans = headTransform.createTransformedShape(shipHead);
+		//System.out.println("x: " + shipHeadTrans.getBounds2D().getX() + "y: " + shipHeadTrans.getBounds2D().getY());
+		
+	
+		
 		renderer.repaint();
+		
+	}
+	
+	//defining a new laser
+	public void fireLaser(){
+		Laser tempLaser = new Laser((int)shipHeadTrans.getBounds2D().getX(), (int)shipHeadTrans.getBounds2D().getY(), 5, 20, ship.getAng());
+		lasers.add(tempLaser);
+		
+		lasTransform = new AffineTransform();
+		lasTransform.rotate(Math.toRadians(tempLaser.getAng()), shipHeadTrans.getBounds2D().getX(), shipHeadTrans.getBounds2D().getY());
+		
+		lasers.get(lasers.size()-1).setX(shipHeadTrans.getBounds2D().getX());
+		lasers.get(lasers.size()-1).setY(shipHeadTrans.getBounds2D().getY());
+		
+		transformedLasers.add(lasTransform.createTransformedShape(tempLaser));
 		
 	}
 	
@@ -213,6 +263,11 @@ public class AsteroidGame implements ActionListener, KeyListener{
 		}
 		else if (e.getKeyCode() == KeyEvent.VK_DOWN){
 			back = true;
+		}
+		
+		//fire laser
+		if (e.getKeyCode() == KeyEvent.VK_SPACE){
+			fireLaser();
 		}
 		
 	}
