@@ -35,7 +35,7 @@ public class Laser extends Rectangle{
 	}
 	
 	public void move(){
-		super.y -= 35;
+		super.y -= 50;
 	}
 	
 	public double getAng(){
