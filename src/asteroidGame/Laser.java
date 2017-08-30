@@ -13,8 +13,6 @@ public class Laser extends Rectangle{
 	public Laser(int x, int y , int width, int height, double ang){
 		super(x, y, width, height);
 		angle = ang;
-		Rectangle tst = new Rectangle(); 
-		
 		
 	}
 	
